@@ -7,9 +7,9 @@
 
 import UIKit
 
-class ViewController: UIViewController {
-    @IBOutlet weak var mainImage: UIImageView!
+class MainViewController: UIViewController{
     
+    @IBOutlet weak var mainImage: UIImageView!
     @IBOutlet weak var todoListButton: UIButton!
     @IBOutlet weak var doneListButton: UIButton!
     
@@ -18,4 +18,5 @@ class ViewController: UIViewController {
         
     }
 }
+
 

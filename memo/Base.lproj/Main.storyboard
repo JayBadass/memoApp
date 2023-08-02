@@ -24,10 +24,10 @@
             </objects>
             <point key="canvasLocation" x="413" y="-679"/>
         </scene>
-        <!--View Controller-->
+        <!--Main View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="memo" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="BYZ-38-t0r" customClass="MainViewController" customModule="memo" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -36,22 +36,22 @@
                                 <rect key="frame" x="87" y="115" width="240" height="128"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </imageView>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZPp-8N-Wnn">
-                                <rect key="frame" x="149" y="324" width="117" height="35"/>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lhS-wc-sM6">
+                                <rect key="frame" x="138" y="327" width="117" height="35"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="plain" title="할일 확인하기"/>
                                 <connections>
-                                    <segue destination="bWM-1x-J0u" kind="show" id="8y6-4T-l0n"/>
+                                    <segue destination="bWM-1x-J0u" kind="show" id="3Qf-71-EKn"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jym-Jl-w8r">
-                                <rect key="frame" x="149" y="386" width="117" height="35"/>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7BN-rT-LRs">
+                                <rect key="frame" x="138" y="409" width="117" height="35"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="plain" title="완료한일 보기"/>
                                 <connections>
-                                    <segue destination="4pb-U1-z5N" kind="show" id="aww-3D-agW"/>
+                                    <segue destination="4pb-U1-z5N" kind="show" id="9uL-DF-DBX"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -60,19 +60,19 @@
                     </view>
                     <navigationItem key="navigationItem" id="esf-TB-hok"/>
                     <connections>
-                        <outlet property="doneListButton" destination="jym-Jl-w8r" id="KOg-S4-T4N"/>
+                        <outlet property="doneListButton" destination="7BN-rT-LRs" id="exd-cn-GTh"/>
                         <outlet property="mainImage" destination="XVK-4l-6IL" id="fho-Nu-W2g"/>
-                        <outlet property="todoListButton" destination="ZPp-8N-Wnn" id="hJx-Gf-9at"/>
+                        <outlet property="todoListButton" destination="lhS-wc-sM6" id="BkF-r3-gyg"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1251.145038167939" y="-680.28169014084506"/>
         </scene>
-        <!--View Controller-->
+        <!--TodoViewController-->
         <scene sceneID="1Tf-xZ-6T3">
             <objects>
-                <viewController id="bWM-1x-J0u" sceneMemberID="viewController">
+                <viewController title="TodoViewController" interactionActivityTrackingBaseName="TodoViewController" id="bWM-1x-J0u" customClass="TodoViewController" customModule="memo" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="WMr-1a-6gG">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -85,10 +85,10 @@
             </objects>
             <point key="canvasLocation" x="2039" y="-1020"/>
         </scene>
-        <!--View Controller-->
+        <!--Done View Controller-->
         <scene sceneID="rhf-DI-WNB">
             <objects>
-                <viewController id="4pb-U1-z5N" sceneMemberID="viewController">
+                <viewController id="4pb-U1-z5N" customClass="DoneViewController" customModule="memo" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="bUE-58-5cl">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
