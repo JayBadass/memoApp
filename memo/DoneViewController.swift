@@ -8,15 +8,19 @@ import UIKit
 
 class DoneViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
-    var collectionView: UICollectionView!
+    private var collectionView: UICollectionView!
     
-    var doneTodos: [TodoItem] {
+    private var doneTodos: [TodoItem] {
         return globalTodoList.filter { $0.isCompleted }
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        setupCollectionView()
+        NotificationCenter.default.addObserver(self, selector: #selector(handleTodoItemDeleted), name: Notification.Name("TodoItemDeleted"), object: nil)
+    }
+    
+    private func setupCollectionView() {
         let layout = UICollectionViewFlowLayout()
         layout.itemSize = CGSize(width: view.frame.width, height: 50)
         
@@ -25,11 +29,9 @@ class DoneViewController: UIViewController, UICollectionViewDataSource, UICollec
         collectionView.delegate = self
         collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "doneCell")
         view.addSubview(collectionView)
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(handleTodoItemDeleted), name: Notification.Name("TodoItemDeleted"), object: nil)
     }
     
-    @objc func handleTodoItemDeleted() {
+    @objc private func handleTodoItemDeleted() {
         collectionView.reloadData()
     }
     
@@ -39,20 +41,21 @@ class DoneViewController: UIViewController, UICollectionViewDataSource, UICollec
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "doneCell", for: indexPath)
+        configureCell(cell, at: indexPath)
+        return cell
+    }
+    
+    private func configureCell(_ cell: UICollectionViewCell, at indexPath: IndexPath) {
         let todo = doneTodos[indexPath.row]
+        
         let label = UILabel(frame: cell.bounds)
         label.text = todo.title
         label.textAlignment = .center
-        
-        let attributedString = NSMutableAttributedString(string: todo.title)
-        label.attributedText = attributedString
         cell.contentView.addSubview(label)
         
         let separatorView = UIView(frame: CGRect(x: 0, y: cell.bounds.height - 1, width: cell.bounds.width, height: 1))
-        separatorView.backgroundColor = .lightGray // 색상 설정
+        separatorView.backgroundColor = .lightGray
         cell.contentView.addSubview(separatorView)
-        
-        return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {

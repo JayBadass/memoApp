@@ -9,19 +9,24 @@ import UIKit
 
 class TodoViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
-    var tableView: UITableView!
+    private var tableView: UITableView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addTodo))
-        
+        setupTableView()
+        setupNavigationBar()
+    }
+    
+    private func setupTableView() {
         tableView = UITableView(frame: view.bounds, style: .plain)
         tableView.delegate = self
         tableView.dataSource = self
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "todoCell")
-        
         view.addSubview(tableView)
+    }
+    
+    private func setupNavigationBar() {
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addTodo))
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -30,12 +35,14 @@ class TodoViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "todoCell", for: indexPath)
-        
+        configureCell(cell, at: indexPath)
+        return cell
+    }
+    
+    private func configureCell(_ cell: UITableViewCell, at indexPath: IndexPath) {
         let todo = globalTodoList[indexPath.row]
         cell.textLabel?.text = todo.title
         cell.accessoryType = todo.isCompleted ? .checkmark : .none
-        
-        return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -43,26 +50,7 @@ class TodoViewController: UIViewController, UITableViewDelegate, UITableViewData
         tableView.reloadRows(at: [indexPath], with: .automatic)
     }
     
-    @objc func datePickerValueChanged(sender: UIDatePicker) {
-        if let alert = presentedViewController as? UIAlertController,
-           let textField = alert.textFields?.last {
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "yyyy/MM/dd HH:mm"
-            textField.text = dateFormatter.string(from: sender.date)
-        }
-    }
-    
-    @objc func doneDatePicker(alert: UIAlertController) {
-        if let textField = alert.textFields?[1],
-           let datePicker = textField.inputView as? UIDatePicker {
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "yyyy/MM/dd HH:mm"
-            textField.text = dateFormatter.string(from: datePicker.date)
-            textField.resignFirstResponder()
-        }
-    }
-    
-    @objc func addTodo() {
+    @objc private func addTodo() {
         let alert = UIAlertController(title: "Add Todo", message: "Enter the details of your new todo.", preferredStyle: .alert)
         
         alert.addTextField { textField in
@@ -77,29 +65,34 @@ class TodoViewController: UIViewController, UITableViewDelegate, UITableViewData
             textField.inputView = datePicker
         }
         
-        
-        let action = UIAlertAction(title: "Add", style: .default) { [unowned self, alert] _ in
-            guard let title = alert.textFields?.first?.text, !title.isEmpty,
-                  let dueDateTextField = alert.textFields?.last?.text else { return }
-            
-            // dateString을 Date로 변환하기 (물론, 올바른 형식이어야 함)
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "yyyy/MM/dd HH:mm"
-            guard let dueDate = dateFormatter.date(from: dueDateTextField) else { return }
-            
-            let todo = TodoItem(id: globalTodoList.count, title: title, isCompleted: false, dueDate: dueDate)
-            globalTodoList.append(todo)
-            self.tableView.reloadData()
+        let addAction = UIAlertAction(title: "Add", style: .default) { [weak self, alert] _ in
+            self?.addActionHandler(alert: alert)
         }
         
-        alert.addAction(action)
+        alert.addAction(addAction)
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
         present(alert, animated: true)
     }
     
+    @objc private func datePickerValueChanged(sender: UIDatePicker) {
+        if let alert = presentedViewController as? UIAlertController,
+           let textField = alert.textFields?.last {
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "yyyy/MM/dd HH:mm"
+            textField.text = dateFormatter.string(from: sender.date)
+        }
+    }
+    
+    private func addActionHandler(alert: UIAlertController) {
+        guard let title = alert.textFields?.first?.text, !title.isEmpty,
+              let dueDateTextField = alert.textFields?.last?.text else { return }
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy/MM/dd HH:mm"
+        guard let dueDate = dateFormatter.date(from: dueDateTextField) else { return }
+        
+        let todo = TodoItem(id: globalTodoList.count, title: title, isCompleted: false, dueDate: dueDate)
+        globalTodoList.append(todo)
+        tableView.reloadData()
+    }
 }
-
-
-
-
-
