@@ -10,7 +10,6 @@ class DoneViewController: UIViewController, UICollectionViewDataSource, UICollec
     
     var collectionView: UICollectionView!
     
-    // 완료된 할 일만 필터링
     var doneTodos: [TodoItem] {
         return globalTodoList.filter { $0.isCompleted }
     }
@@ -18,16 +17,20 @@ class DoneViewController: UIViewController, UICollectionViewDataSource, UICollec
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // 레이아웃 설정
         let layout = UICollectionViewFlowLayout()
-        layout.itemSize = CGSize(width: view.frame.width, height: 50) // 셀 크기 조절
+        layout.itemSize = CGSize(width: view.frame.width, height: 50)
         
-        // 컬렉션 뷰 초기화 및 설정
         collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: layout)
         collectionView.dataSource = self
         collectionView.delegate = self
         collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "doneCell")
         view.addSubview(collectionView)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(handleTodoItemDeleted), name: Notification.Name("TodoItemDeleted"), object: nil)
+    }
+    
+    @objc func handleTodoItemDeleted() {
+        collectionView.reloadData()
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -37,19 +40,25 @@ class DoneViewController: UIViewController, UICollectionViewDataSource, UICollec
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "doneCell", for: indexPath)
         let todo = doneTodos[indexPath.row]
-        
-        // 셀 내부에 레이블 추가
         let label = UILabel(frame: cell.bounds)
         label.text = todo.title
         label.textAlignment = .center
-        // 완료되었을 경우 취소선
+        
         let attributedString = NSMutableAttributedString(string: todo.title)
-        if todo.isCompleted {
-            attributedString.addAttribute(.strikethroughStyle, value: NSUnderlineStyle.single.rawValue, range: NSRange(location: 0, length: todo.title.count))
-        }
         label.attributedText = attributedString
         cell.contentView.addSubview(label)
         
+        let separatorView = UIView(frame: CGRect(x: 0, y: cell.bounds.height - 1, width: cell.bounds.width, height: 1))
+        separatorView.backgroundColor = .lightGray // 색상 설정
+        cell.contentView.addSubview(separatorView)
+        
         return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        guard let todoDetailViewController = storyboard.instantiateViewController(withIdentifier: "TodoDetailViewController") as? TodoDetailViewController else { return }
+        todoDetailViewController.todoItem = doneTodos[indexPath.row]
+        navigationController?.pushViewController(todoDetailViewController, animated: true)
     }
 }

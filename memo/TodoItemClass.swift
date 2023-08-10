@@ -4,12 +4,13 @@
 //
 //  Created by Jongbum Lee on 2023/08/02.
 //
-
-import Foundation
+import UIKit
 
 var globalTodoList: [TodoItem] = []
 
 struct TodoItem {
+    var id: Int
     var title: String
     var isCompleted: Bool
+    var dueDate: Date
 }
