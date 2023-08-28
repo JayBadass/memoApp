@@ -13,6 +13,13 @@ struct TodoItem: Codable {
     var title: String
     var isCompleted: Bool
     var dueDate: Date
+    var category: Category
+}
+
+enum Category: String, Codable, CaseIterable {
+    case working = "Working"
+    case studying = "Studying"
+    case playing = "Playing"
 }
 
 extension UserDefaults {
