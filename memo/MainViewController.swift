@@ -11,6 +11,8 @@ class MainViewController: UIViewController{
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        globalTodoList = UserDefaults.standard.getTodoList()
     }
 }
 
