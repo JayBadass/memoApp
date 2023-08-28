@@ -106,6 +106,83 @@ extension TodoViewController: UITableViewDelegate, UITableViewDataSource {
         tableView.reloadRows(at: [indexPath], with: .automatic)
     }
     
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { [weak self] (_, _, completionHandler) in
+            let category = Category.allCases[indexPath.section]
+            if let index = self?.todoList.firstIndex(where: { $0.id == self?.todos(in: category)[indexPath.row].id }) {
+                self?.todoList.remove(at: index)
+            }
+            completionHandler(true)
+        }
+        
+        let editAction = UIContextualAction(style: .normal, title: "Edit") { [weak self] (_, _, completionHandler) in
+            self?.editTodo(at: indexPath)
+            completionHandler(true)
+        }
+        
+        editAction.backgroundColor = .systemBlue
+        let configuration = UISwipeActionsConfiguration(actions: [deleteAction, editAction])
+        return configuration
+    }
+    
+    private func editTodo(at indexPath: IndexPath) {
+        let category = Category.allCases[indexPath.section]
+        guard let todoIndex = todoList.firstIndex(where: { $0.id == todos(in: category)[indexPath.row].id }) else { return }
+        
+        let todo = todoList[todoIndex]
+        let alert = UIAlertController(title: "Edit Todo", message: "Update your todo details.", preferredStyle: .alert)
+        setupAlertFields(for: alert, with: todo)
+        
+        let updateAction = UIAlertAction(title: "Update", style: .default) { [weak self] _ in
+            self?.updateActionHandler(alert: alert, at: todoIndex)
+        }
+        alert.addAction(updateAction)
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        
+        present(alert, animated: true)
+    }
+    
+    func setupAlertFields(for alert: UIAlertController, with todo: TodoItem? = nil) {
+        alert.addTextField { textField in
+            textField.placeholder = "Todo Title"
+            textField.text = todo?.title
+        }
+        
+        alert.addTextField { textField in
+            textField.placeholder = "Category"
+            let categoryPicker = UIPickerView()
+            categoryPicker.delegate = self
+            categoryPicker.dataSource = self
+            if let category = todo?.category, let index = Category.allCases.firstIndex(of: category) {
+                categoryPicker.selectRow(index, inComponent: 0, animated: false)
+                textField.text = category.rawValue
+            }
+            textField.inputView = categoryPicker
+        }
+        
+        alert.addTextField { textField in
+            textField.placeholder = "Due Date"
+            let datePicker = UIDatePicker()
+            datePicker.preferredDatePickerStyle = .wheels
+            datePicker.addTarget(self, action: #selector(self.datePickerValueChanged(sender:)), for: .valueChanged)
+            if let date = todo?.dueDate {
+                datePicker.date = date
+                textField.text = self.dateFormatter.string(from: date)
+            }
+            textField.inputView = datePicker
+        }
+    }
+    
+    private func updateActionHandler(alert: UIAlertController, at index: Int) {
+        guard let title = alert.textFields?.first?.text, !title.isEmpty,
+              let categoryText = alert.textFields?[1].text,
+              let category = Category(rawValue: categoryText),
+              let dueDateString = alert.textFields?.last?.text,
+              let dueDate = dateFormatter.date(from: dueDateString) else { return }
+        
+        todoList[index] = TodoItem(id: todoList[index].id, title: title, isCompleted: todoList[index].isCompleted, dueDate: dueDate, category: category)
+    }
+    
     func todos(in category: Category) -> [TodoItem] {
         return todoList.filter { $0.category == category }
     }
