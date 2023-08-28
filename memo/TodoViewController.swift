@@ -93,6 +93,7 @@ class TodoViewController: UIViewController, UITableViewDelegate, UITableViewData
         
         let todo = TodoItem(id: globalTodoList.count, title: title, isCompleted: false, dueDate: dueDate)
         globalTodoList.append(todo)
+        UserDefaults.standard.setTodoList(globalTodoList)
         tableView.reloadData()
     }
 }

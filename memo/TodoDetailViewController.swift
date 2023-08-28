@@ -84,6 +84,7 @@ class TodoDetailViewController: UIViewController {
                 globalTodoList[index].dueDate = dueDate
             }
         }
+        UserDefaults.standard.setTodoList(globalTodoList)
         updateUI()
     }
     
@@ -112,6 +113,7 @@ class TodoDetailViewController: UIViewController {
     private func handleDeleteAction() {
         guard let todoItem = self.todoItem else { return }
         globalTodoList.removeAll { $0.id == todoItem.id }
+        UserDefaults.standard.setTodoList(globalTodoList)
         NotificationCenter.default.post(name: Notification.Name("TodoItemDeleted"), object: nil)
         navigationController?.popViewController(animated: true)
     }
