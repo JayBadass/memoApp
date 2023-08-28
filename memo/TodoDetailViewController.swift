@@ -95,6 +95,7 @@ class TodoDetailViewController: UIViewController, UIPickerViewDelegate, UIPicker
     private func setupDatePicker(for textField: UITextField) {
         textField.placeholder = "Due Date"
         let datePicker = UIDatePicker()
+        datePicker.tag = 101
         datePicker.preferredDatePickerStyle = .wheels
         datePicker.addTarget(self, action: #selector(datePickerValueChanged(sender:)), for: .valueChanged)
         if let dueDate = todoItem?.dueDate {
@@ -121,11 +122,12 @@ class TodoDetailViewController: UIViewController, UIPickerViewDelegate, UIPicker
     }
     
     @objc private func datePickerValueChanged(sender: UIDatePicker) {
-        if let alert = presentedViewController as? UIAlertController,
-           let textField = alert.textFields?.last {
+        if let alert = presentedViewController as? UIAlertController {
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "yyyy/MM/dd HH:mm"
-            textField.text = dateFormatter.string(from: sender.date)
+            if let dueDateTextField = alert.textFields?.first(where: { $0.inputView?.tag == 101 }) {
+                dueDateTextField.text = dateFormatter.string(from: sender.date)
+            }
         }
     }
     
