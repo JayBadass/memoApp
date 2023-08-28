@@ -164,13 +164,21 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vG8-aN-ksu">
+                                <rect key="frame" x="175.66666666666666" y="473" width="42" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="FXO-vj-6Ra"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="cNE-mN-AZs" firstAttribute="top" secondItem="6NX-Hf-bLi" secondAttribute="bottom" constant="30" id="1Ne-Xf-Ytz"/>
                             <constraint firstItem="Wvx-1z-gjE" firstAttribute="top" secondItem="wmB-eL-SFw" secondAttribute="bottom" constant="30" id="6ax-3j-wPF"/>
+                            <constraint firstItem="vG8-aN-ksu" firstAttribute="centerX" secondItem="cJH-Zj-i4F" secondAttribute="centerX" id="GsO-US-YE6"/>
                             <constraint firstItem="6NX-Hf-bLi" firstAttribute="centerX" secondItem="cJH-Zj-i4F" secondAttribute="centerX" id="MpF-ir-uzQ"/>
+                            <constraint firstItem="vG8-aN-ksu" firstAttribute="top" secondItem="cNE-mN-AZs" secondAttribute="bottom" constant="30" id="OHt-Zd-i4C"/>
                             <constraint firstItem="wmB-eL-SFw" firstAttribute="top" secondItem="FXO-vj-6Ra" secondAttribute="top" constant="80" id="QlP-DJ-392"/>
                             <constraint firstItem="Wvx-1z-gjE" firstAttribute="centerX" secondItem="cJH-Zj-i4F" secondAttribute="centerX" id="anP-fX-FbD"/>
                             <constraint firstItem="6NX-Hf-bLi" firstAttribute="top" secondItem="Wvx-1z-gjE" secondAttribute="bottom" constant="30" id="cvM-la-iAq"/>
@@ -180,6 +188,7 @@
                     </view>
                     <navigationItem key="navigationItem" id="RSO-cX-uKz"/>
                     <connections>
+                        <outlet property="categoryLabel" destination="vG8-aN-ksu" id="qeU-2Y-tFX"/>
                         <outlet property="dueDateLabel" destination="cNE-mN-AZs" id="mQk-c2-uaU"/>
                         <outlet property="imageView" destination="wmB-eL-SFw" id="wGe-7e-fl4"/>
                         <outlet property="nameLabel" destination="6NX-Hf-bLi" id="i7Y-NP-iEI"/>

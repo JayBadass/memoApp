@@ -7,11 +7,12 @@
 
 import UIKit
 
-class TodoDetailViewController: UIViewController {
+class TodoDetailViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource {
     var todoItem: TodoItem?
     
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var imageView: UIImageView!
+    @IBOutlet weak var categoryLabel: UILabel!
     @IBOutlet weak var segmentedControl: UISegmentedControl!
     @IBOutlet weak var dueDateLabel: UILabel!
     
@@ -25,9 +26,29 @@ class TodoDetailViewController: UIViewController {
         updateUI()
     }
     
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+            return 1
+        }
+
+        func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+            return Category.allCases.count
+        }
+
+        func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+            return Category.allCases[row].rawValue
+        }
+
+        func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+            if let alert = presentedViewController as? UIAlertController,
+               let textField = alert.textFields?.last {
+                textField.text = Category.allCases[row].rawValue
+            }
+        }
+    
     private func updateUI() {
         nameLabel.text = todoItem?.title
         segmentedControl.selectedSegmentIndex = todoItem?.isCompleted ?? false ? 1 : 0
+        categoryLabel.text = "Category: \(todoItem?.category.rawValue ?? "")"
         
         if let dueDate = todoItem?.dueDate {
             let dateFormatter = DateFormatter()
@@ -49,6 +70,17 @@ class TodoDetailViewController: UIViewController {
         
         alertController.addTextField { textField in
             self.setupDatePicker(for: textField)
+        }
+        
+        alertController.addTextField { textField in
+            textField.text = self.todoItem?.category.rawValue
+            let pickerView = UIPickerView()
+            pickerView.delegate = self
+            pickerView.dataSource = self
+            if let index = Category.allCases.firstIndex(where: { $0 == self.todoItem?.category }) {
+                pickerView.selectRow(index, inComponent: 0, animated: false)
+            }
+            textField.inputView = pickerView
         }
         
         let editAction = UIAlertAction(title: "Edit", style: .default) { _ in
