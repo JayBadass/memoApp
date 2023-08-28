@@ -27,23 +27,23 @@ class TodoDetailViewController: UIViewController, UIPickerViewDelegate, UIPicker
     }
     
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
-            return 1
+        return 1
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        return Category.allCases.count
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        return Category.allCases[row].rawValue
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        if let alert = presentedViewController as? UIAlertController,
+           let textField = alert.textFields?.last {
+            textField.text = Category.allCases[row].rawValue
         }
-
-        func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-            return Category.allCases.count
-        }
-
-        func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-            return Category.allCases[row].rawValue
-        }
-
-        func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-            if let alert = presentedViewController as? UIAlertController,
-               let textField = alert.textFields?.last {
-                textField.text = Category.allCases[row].rawValue
-            }
-        }
+    }
     
     private func updateUI() {
         nameLabel.text = todoItem?.title
@@ -56,7 +56,7 @@ class TodoDetailViewController: UIViewController, UIPickerViewDelegate, UIPicker
             dueDateLabel.text = dateFormatter.string(from: dueDate)
         }
     }
-
+    
     @objc private func editButtonTapped(_ sender: Any) {
         showEditAlert()
     }
