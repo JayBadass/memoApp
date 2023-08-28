@@ -6,71 +6,78 @@
 //
 import UIKit
 
-class DoneViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+class DoneViewController: UIViewController {
     
-    private var tableView: UITableView!
+    private var collectionView: UICollectionView!
     
     private var doneTodos: [TodoItem] {
         return UserDefaults.standard.getTodoList().filter { $0.isCompleted }
     }
     
-    private var categories: [Category] {
-        return Category.allCases
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupTableView()
+        setupCollectionView()
         NotificationCenter.default.addObserver(self, selector: #selector(handleTodoItemDeleted), name: Notification.Name("TodoItemDeleted"), object: nil)
     }
     
-    private func setupTableView() {
-        tableView = UITableView(frame: view.bounds, style: .grouped)
-        tableView.delegate = self
-        tableView.dataSource = self
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "doneCell")
-        view.addSubview(tableView)
+    private func setupCollectionView() {
+        let layout = UICollectionViewFlowLayout()
+        layout.itemSize = CGSize(width: view.frame.width, height: 70)
+        
+        collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: layout)
+        collectionView.dataSource = self
+        collectionView.delegate = self
+        collectionView.backgroundColor = .white
+        collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "doneCell")
+        view.addSubview(collectionView)
     }
     
     @objc private func handleTodoItemDeleted() {
-        tableView.reloadData()
+        collectionView.reloadData()
     }
     
-    func numberOfSections(in tableView: UITableView) -> Int {
-        return categories.count
-    }
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return doneTodos.filter { $0.category == categories[section] }.count
-    }
-    
-    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        let category = categories[section]
-        return doneTodos.filter { $0.category == category }.isEmpty ? nil : category.rawValue
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "doneCell", for: indexPath)
+    private func configureCell(_ cell: UICollectionViewCell, with todo: TodoItem) {
+        let titleLabel = createLabel(in: cell, text: todo.title, yPosition: 5)
+        let categoryLabel = createLabel(in: cell, text: "Category: \(todo.category.rawValue)", yPosition: 35, textColor: .gray)
         
-        let category = categories[indexPath.section]
-        let todosForCategory = doneTodos.filter { $0.category == category }
-        let todo = todosForCategory[indexPath.row]
+        cell.contentView.addSubview(titleLabel)
+        cell.contentView.addSubview(categoryLabel)
         
-        cell.textLabel?.text = todo.title
-        cell.detailTextLabel?.text = "Category: \(todo.category.rawValue)"
-        
+        let separatorView = UIView(frame: CGRect(x: 0, y: cell.bounds.height - 1, width: cell.bounds.width, height: 1))
+        separatorView.backgroundColor = .lightGray
+        cell.contentView.addSubview(separatorView)
+    }
+    
+    private func createLabel(in cell: UICollectionViewCell, text: String, yPosition: CGFloat, textColor: UIColor = .black) -> UILabel {
+        let label = UILabel(frame: CGRect(x: 15, y: yPosition, width: cell.bounds.width - 30, height: 30))
+        label.text = text
+        label.textColor = textColor
+        label.textAlignment = .left
+        return label
+    }
+}
+
+// MARK: - UICollectionView DataSource
+extension DoneViewController: UICollectionViewDataSource {
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return doneTodos.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "doneCell", for: indexPath)
+        configureCell(cell, with: doneTodos[indexPath.row])
         return cell
     }
+}
+
+// MARK: - UICollectionView Delegate
+extension DoneViewController: UICollectionViewDelegateFlowLayout {
     
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         guard let todoDetailViewController = storyboard.instantiateViewController(withIdentifier: "TodoDetailViewController") as? TodoDetailViewController else { return }
-        
-        let category = categories[indexPath.section]
-        let todosForCategory = doneTodos.filter { $0.category == category }
-        let todo = todosForCategory[indexPath.row]
-        
-        todoDetailViewController.todoItem = todo
+        todoDetailViewController.todoItem = doneTodos[indexPath.row]
         navigationController?.pushViewController(todoDetailViewController, animated: true)
     }
 }

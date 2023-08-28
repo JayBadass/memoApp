@@ -6,8 +6,6 @@
 //
 import UIKit
 
-var globalTodoList: [TodoItem] = []
-
 struct TodoItem: Codable {
     var id: Int
     var title: String
