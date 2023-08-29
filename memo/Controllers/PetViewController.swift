@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Alamofire
 
 class PetViewController: UIViewController {
     
@@ -24,49 +25,40 @@ class PetViewController: UIViewController {
     
     func fetchCatImage() {
         let urlString = "https://api.thecatapi.com/v1/images/search"
-        guard let url = URL(string: urlString) else { return }
+        guard URL(string: urlString) != nil else { return }
         
         self.petImage.image = UIImage(named: "placeholder")
         
-        URLSession.shared.dataTask(with: url) { (data, response, error) in
-            guard error == nil, let data = data else {
-                print("Error fetching data:", error ?? "")
-                return
-            }
-            
-            do {
-                let catImages = try JSONDecoder().decode([CatImage].self, from: data)
-                if let firstImage = catImages.first {
+        AF.request(urlString).responseDecodable(of: [CatImage].self) {
+            (response) in switch response.result {
+            case .success(let petImage):
+                if let firstImage = petImage.first {
                     DispatchQueue.main.async {
                         self.petImage.frame.size = CGSize(width: firstImage.width, height: firstImage.height)
                     }
                     self.loadImage(from: firstImage.url)
                 }
-            } catch {
-                print("Error decoding JSON:", error)
+            case .failure(let error):
+                print("Error fetching data:", error)
             }
-        }.resume()
+        }
     }
     
     func loadImage(from urlString: String) {
-        guard let url = URL(string: urlString) else { return }
-        
-        URLSession.shared.dataTask(with: url) { (data, response, error) in
-            guard error == nil, let data = data else {
-                print("Error fetching image:", error ?? "")
-                return
+        AF.request(urlString).responseData { (response) in
+            switch response.result {
+            case .success(let data):
+                DispatchQueue.main.async {
+                    let image = UIImage(data: data)
+                    self.petImage.image = image
+                }
+            case .failure(let error):
+                print("Error fetching image:", error)
             }
-            
-            DispatchQueue.main.async {
-                let image = UIImage(data: data)
-                self.petImage.image = image
-            }
-        }.resume()
+        }
     }
     
     @IBAction func refreshButtonTapped(_ sender: UIButton) {
-        self.petImage.image = nil
-        
         fetchCatImage()
     }
 }
