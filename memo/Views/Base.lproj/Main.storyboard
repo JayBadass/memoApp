@@ -279,13 +279,12 @@
         <!--Title-->
         <scene sceneID="arw-oG-qp0">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="UAV-w6-RzU" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
                 <viewController modalPresentationStyle="fullScreen" id="16T-hy-t3h" customClass="ProfileViewController" customModule="memo" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="2Tl-4x-GIB">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="842"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="ProfileImage" translatesAutoresizingMaskIntoConstraints="NO" id="UX6-0e-oC8">
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="profileImage" translatesAutoresizingMaskIntoConstraints="NO" id="UX6-0e-oC8">
                                 <rect key="frame" x="14" y="70" width="88" height="88"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="88" id="FRI-X9-BA3"/>
@@ -379,7 +378,7 @@
                                     <constraint firstAttribute="width" constant="150" id="VgT-zI-YIq"/>
                                 </constraints>
                                 <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="plain" image="FollowButton"/>
+                                <buttonConfiguration key="configuration" style="plain" image="followButton"/>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Cel-gf-QCI">
                                 <rect key="frame" x="173" y="246" width="150" height="30"/>
@@ -388,7 +387,7 @@
                                     <constraint firstAttribute="width" constant="150" id="oed-mD-AQv"/>
                                 </constraints>
                                 <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="plain" image="MessageButton"/>
+                                <buttonConfiguration key="configuration" style="plain" image="messageButton"/>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" pointerInteraction="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Dnw-w0-g0p">
                                 <rect key="frame" x="331" y="246" width="30" height="30"/>
@@ -397,7 +396,7 @@
                                     <constraint firstAttribute="width" constant="30" id="vWf-8p-UAi"/>
                                 </constraints>
                                 <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="plain" image="MoreButton"/>
+                                <buttonConfiguration key="configuration" style="plain" image="moreButton"/>
                             </button>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="qT5-sl-0Ie">
                                 <rect key="frame" x="0.0" y="286" width="393" height="1"/>
@@ -406,7 +405,7 @@
                                     <constraint firstAttribute="height" constant="1" id="NLR-NA-sF2"/>
                                 </constraints>
                             </view>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Grid" translatesAutoresizingMaskIntoConstraints="NO" id="iET-8m-bWi">
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="gridIcon" translatesAutoresizingMaskIntoConstraints="NO" id="iET-8m-bWi">
                                 <rect key="frame" x="52" y="295" width="22.666666666666671" height="22.666666666666686"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="22.5" id="59h-Qg-yfX"/>
@@ -430,7 +429,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="120" height="120"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Image" translatesAutoresizingMaskIntoConstraints="NO" id="imF-8p-DEv">
+                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="dummyImage" translatesAutoresizingMaskIntoConstraints="NO" id="imF-8p-DEv">
                                                     <rect key="frame" x="0.0" y="0.0" width="120" height="120"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" constant="121" id="S2E-V3-iWh"/>
@@ -484,7 +483,7 @@
                             <constraint firstItem="UX6-0e-oC8" firstAttribute="leading" secondItem="jnK-hM-7Gj" secondAttribute="leading" constant="14" id="xi8-gV-aR2"/>
                         </constraints>
                     </view>
-                    <tabBarItem key="tabBarItem" title="Item" id="kud-FQ-5yt"/>
+                    <tabBarItem key="tabBarItem" title="" selectedImage="profileIcon" id="kud-FQ-5yt"/>
                     <navigationItem key="navigationItem" title="Title" id="ntd-Dn-bFv">
                         <barButtonItem key="rightBarButtonItem" title="Item" id="d1d-aT-ZlL"/>
                     </navigationItem>
@@ -493,6 +492,7 @@
                         <outlet property="collectionView" destination="UQc-e4-RpT" id="X5x-ei-pH6"/>
                     </connections>
                 </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="UAV-w6-RzU" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="2820.6106870229005" y="1050"/>
         </scene>
@@ -516,14 +516,15 @@
         </scene>
     </scenes>
     <resources>
-        <image name="FollowButton" width="150" height="30"/>
-        <image name="Grid" width="22.5" height="22.5"/>
-        <image name="Image" width="1200" height="1200"/>
-        <image name="MessageButton" width="150" height="30"/>
-        <image name="MoreButton" width="30" height="30"/>
-        <image name="ProfileImage" width="88" height="88"/>
         <image name="arrow.clockwise.circle.fill" catalog="system" width="128" height="123"/>
+        <image name="dummyImage" width="1200" height="1200"/>
+        <image name="followButton" width="150" height="30"/>
+        <image name="gridIcon" width="22.5" height="22.5"/>
+        <image name="messageButton" width="150" height="30"/>
+        <image name="moreButton" width="30" height="30"/>
         <image name="pawprint.circle.fill" catalog="system" width="128" height="123"/>
+        <image name="profileIcon" width="22.5" height="23"/>
+        <image name="profileImage" width="88" height="88"/>
         <image name="swift.png" width="409.60000610351562" height="409.60000610351562"/>
         <systemColor name="opaqueSeparatorColor">
             <color red="0.77647058823529413" green="0.77647058823529413" blue="0.78431372549019607" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
