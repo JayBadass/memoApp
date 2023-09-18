@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6968A7E02AB8095F004369BF /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6968A7DF2AB8095F004369BF /* ProfileViewController.swift */; };
 		6979A3F32A9CB35C00AC293A /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 6979A3F22A9CB35C00AC293A /* Kingfisher */; };
 		6979A3FB2A9D94D800AC293A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6979A3FA2A9D94D800AC293A /* Assets.xcassets */; };
 		6979A3FD2A9DA82200AC293A /* appIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 6979A3FC2A9DA82200AC293A /* appIcon.png */; };
@@ -25,6 +26,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		6968A7DF2AB8095F004369BF /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		6979A3FA2A9D94D800AC293A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		6979A3FC2A9DA82200AC293A /* appIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = appIcon.png; sourceTree = "<group>"; };
 		6979A3FE2A9DA9CB00AC293A /* PetViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetViewController.swift; sourceTree = "<group>"; };
@@ -71,6 +73,7 @@
 				69A3B4732A79F09500FA119D /* MainViewController.swift */,
 				69D441E52A84835D003A75A6 /* TodoDetailViewController.swift */,
 				6979A3FE2A9DA9CB00AC293A /* PetViewController.swift */,
+				6968A7DF2AB8095F004369BF /* ProfileViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -206,6 +209,7 @@
 			files = (
 				69A3B4742A79F09500FA119D /* MainViewController.swift in Sources */,
 				69A3B4702A79F09500FA119D /* AppDelegate.swift in Sources */,
+				6968A7E02AB8095F004369BF /* ProfileViewController.swift in Sources */,
 				6979A4012A9DB14A00AC293A /* PetModels.swift in Sources */,
 				6979A3FF2A9DA9CB00AC293A /* PetViewController.swift in Sources */,
 				69A3B4722A79F09500FA119D /* SceneDelegate.swift in Sources */,
