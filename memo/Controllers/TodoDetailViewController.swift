@@ -6,10 +6,11 @@
 //
 
 import UIKit
+import CoreData
 
 class TodoDetailViewController: UIViewController {
     
-    var todoItem: TodoItem?
+    var todoItem: Task?  // Modified from TodoItem to Task for CoreData
     
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var imageView: UIImageView!
@@ -46,7 +47,7 @@ extension TodoDetailViewController {
     @objc private func updateUI() {
         nameLabel.text = todoItem?.title
         segmentedControl.selectedSegmentIndex = todoItem?.isCompleted ?? false ? 1 : 0
-        categoryLabel.text = "Category: \(todoItem?.category.rawValue ?? "")"
+        categoryLabel.text = "Category: \(todoItem?.category ?? "")"
         dueDateLabel.text = formattedDate(todoItem?.dueDate)
     }
     
@@ -61,15 +62,13 @@ extension TodoDetailViewController {
 // MARK: - Data Handling
 extension TodoDetailViewController {
     
-    private func getTodoList() -> [TodoItem] {
-        return UserDefaults.standard.getTodoList()
-    }
-    
-    private func setTodoList(_ list: [TodoItem]) {
-        UserDefaults.standard.setTodoList(list)
+    @objc private func editButtonTapped(_ sender: Any) {
+        showEditAlert()
     }
     
     private func handleEditAction(in alertController: UIAlertController) {
+        guard let todoItem = self.todoItem else { return }
+
         let title = alertController.textFields?[0].text
         let dueDateString = alertController.textFields?[1].text
         let categoryString = alertController.textFields?[2].text
@@ -78,31 +77,30 @@ extension TodoDetailViewController {
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm"
         guard let dueDate = dateFormatter.date(from: dueDateString ?? "") else { return }
         
-        var todoList = getTodoList()
-        for (index, item) in todoList.enumerated() {
-            if item.id == todoItem?.id {
-                todoList[index].title = title ?? ""
-                todoList[index].dueDate = dueDate
-                if let category = Category(rawValue: categoryString ?? "") {
-                    todoList[index].category = category
-                }
-                todoItem = todoList[index]
-            }
-        }
-        setTodoList(todoList)
+        todoItem.title = title
+        todoItem.dueDate = dueDate
+        todoItem.category = categoryString ?? ""
+        
+        _ = CoreDataHelper.shared.updateTask(todoItem, with: title ?? "")
         updateUI()
     }
     
+    @objc private func deleteButtonTapped(_ sender: Any) {
+        if let todoItem = self.todoItem {
+            _ = CoreDataHelper.shared.deleteTask(todoItem)
+            NotificationCenter.default.post(name: Notification.Name("TodoItemDeleted"), object: nil)
+            navigationController?.popViewController(animated: true)
+        }
+    }
+    
     private func handleDeleteAction() {
-        guard let todoItem = self.todoItem else { return }
+        guard let todoItemToDelete = todoItem else { return }
         
-        var todoList = getTodoList()
-        
-        todoList.removeAll { $0.id == todoItem.id }
-        setTodoList(todoList)
+        _ = CoreDataHelper.shared.deleteTask(todoItemToDelete)
         NotificationCenter.default.post(name: Notification.Name("TodoItemDeleted"), object: nil)
         navigationController?.popViewController(animated: true)
     }
+
 }
 
 // MARK: - Alerts and Notifications
@@ -126,10 +124,6 @@ extension TodoDetailViewController: UIPickerViewDelegate, UIPickerViewDataSource
         }
     }
 
-    @objc private func editButtonTapped(_ sender: Any) {
-        showEditAlert()
-    }
-    
     private func showEditAlert() {
         let alertController = UIAlertController(title: "Edit Todo", message: "Edit the details of your todo.", preferredStyle: .alert)
         
@@ -142,11 +136,11 @@ extension TodoDetailViewController: UIPickerViewDelegate, UIPickerViewDataSource
         }
         
         alertController.addTextField { textField in
-            textField.text = self.todoItem?.category.rawValue
+            textField.text = self.todoItem?.category
             let pickerView = UIPickerView()
             pickerView.delegate = self
             pickerView.dataSource = self
-            if let index = Category.allCases.firstIndex(where: { $0 == self.todoItem?.category }) {
+            if let index = Category.allCases.firstIndex(where: { $0.rawValue == self.todoItem?.category }) {
                 pickerView.selectRow(index, inComponent: 0, animated: false)
             }
             textField.inputView = pickerView
@@ -159,10 +153,6 @@ extension TodoDetailViewController: UIPickerViewDelegate, UIPickerViewDataSource
         alertController.addAction(editAction)
         alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel))
         present(alertController, animated: true)
-    }
-    
-    @objc private func deleteButtonTapped(_ sender: Any) {
-        showDeleteAlert()
     }
     
     private func showDeleteAlert() {
