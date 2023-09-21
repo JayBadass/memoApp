@@ -8,8 +8,6 @@
 import UIKit
 import CoreData
 
-import UIKit
-
 class TodoViewController: UIViewController {
     
     
@@ -46,7 +44,6 @@ class TodoViewController: UIViewController {
         alert.addTextField { (textField) in
             textField.placeholder = "Due Date (YYYY/MM/DD)"
             
-            // UIDatePicker for Due Date
             let datePicker = UIDatePicker()
             datePicker.datePickerMode = .date
             datePicker.preferredDatePickerStyle = .wheels
@@ -151,7 +148,6 @@ extension TodoViewController: UITableViewDataSource, UITableViewDelegate {
         cell.textLabel?.text = task.title
         cell.detailTextLabel?.text = viewModel.dateString(from: task.dueDate!)
         
-        // Task의 isCompleted 상태에 따라 체크표시 설정
         if task.isCompleted {
             cell.accessoryType = .checkmark
         } else {
@@ -177,7 +173,6 @@ extension TodoViewController: UITableViewDataSource, UITableViewDelegate {
     }
 }
 
-// MARK: - UIPickerView Delegate & DataSource
 extension TodoViewController: UIPickerViewDelegate, UIPickerViewDataSource {
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
         return 1
