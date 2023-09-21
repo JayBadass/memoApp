@@ -10,13 +10,15 @@ import CoreData
 
 class TodoDetailViewController: UIViewController {
     
-    var todoItem: Task?  // Modified from TodoItem to Task for CoreData
+    var todoItem: Task?
     
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var categoryLabel: UILabel!
     @IBOutlet weak var segmentedControl: UISegmentedControl!
     @IBOutlet weak var dueDateLabel: UILabel!
+    
+    var viewModel: TodoDetailViewModel!
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -26,8 +28,13 @@ class TodoDetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        setupNavigationBar()
-        NotificationCenter.default.addObserver(self, selector: #selector(updateUI), name: .todoItemUpdated, object: nil)
+        if let item = todoItem {
+            viewModel = TodoDetailViewModel(todoItem: item)
+        }
+        
+        viewModel.dataDidUpdate = { [weak self] in
+            self?.updateUI()
+        }
     }
     
     private func setupNavigationBar() {
@@ -41,25 +48,23 @@ class TodoDetailViewController: UIViewController {
     }
 }
 
-// MARK: - UI Updates
 extension TodoDetailViewController {
     
     @objc private func updateUI() {
-        nameLabel.text = todoItem?.title
-        segmentedControl.selectedSegmentIndex = todoItem?.isCompleted ?? false ? 1 : 0
-        categoryLabel.text = "Category: \(todoItem?.category ?? "")"
-        dueDateLabel.text = formattedDate(todoItem?.dueDate)
+        nameLabel.text = viewModel.title
+        segmentedControl.selectedSegmentIndex = viewModel.isCompleted ? 1 : 0
+        categoryLabel.text = "Category: \(viewModel.category)"
+        dueDateLabel.text = formattedDate(viewModel.dueDate)
     }
     
     private func formattedDate(_ date: Date?) -> String? {
         guard let date = date else { return nil }
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm"
+        dateFormatter.dateFormat = "yyyy/MM/dd"
         return dateFormatter.string(from: date)
     }
 }
 
-// MARK: - Data Handling
 extension TodoDetailViewController {
     
     @objc private func editButtonTapped(_ sender: Any) {
@@ -67,22 +72,15 @@ extension TodoDetailViewController {
     }
     
     private func handleEditAction(in alertController: UIAlertController) {
-        guard let todoItem = self.todoItem else { return }
-
         let title = alertController.textFields?[0].text
         let dueDateString = alertController.textFields?[1].text
         let categoryString = alertController.textFields?[2].text
         
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm"
-        guard let dueDate = dateFormatter.date(from: dueDateString ?? "") else { return }
+        dateFormatter.dateFormat = "yyyy/MM/dd"
+        let dueDate = dateFormatter.date(from: dueDateString ?? "")
         
-        todoItem.title = title
-        todoItem.dueDate = dueDate
-        todoItem.category = categoryString ?? ""
-        
-        _ = CoreDataHelper.shared.updateTask(todoItem, with: title ?? "")
-        updateUI()
+        viewModel.handleEditAction(title: title, dueDate: dueDate, category: categoryString)
     }
     
     @objc private func deleteButtonTapped(_ sender: Any) {
@@ -94,16 +92,12 @@ extension TodoDetailViewController {
     }
     
     private func handleDeleteAction() {
-        guard let todoItemToDelete = todoItem else { return }
-        
-        _ = CoreDataHelper.shared.deleteTask(todoItemToDelete)
-        NotificationCenter.default.post(name: Notification.Name("TodoItemDeleted"), object: nil)
+        viewModel.handleDeleteAction()
         navigationController?.popViewController(animated: true)
     }
-
+    
 }
 
-// MARK: - Alerts and Notifications
 extension TodoDetailViewController: UIPickerViewDelegate, UIPickerViewDataSource {
     
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
@@ -123,7 +117,7 @@ extension TodoDetailViewController: UIPickerViewDelegate, UIPickerViewDataSource
             activeTextField.text = Category.allCases[row].rawValue
         }
     }
-
+    
     private func showEditAlert() {
         let alertController = UIAlertController(title: "Edit Todo", message: "Edit the details of your todo.", preferredStyle: .alert)
         
@@ -174,7 +168,7 @@ extension TodoDetailViewController: UIPickerViewDelegate, UIPickerViewDataSource
     
     @objc private func dateChanged(_ datePicker: UIDatePicker) {
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm"
+        dateFormatter.dateFormat = "yyyy/MM/dd"
         if let activeTextField = UIResponder.currentFirst as? UITextField {
             activeTextField.text = dateFormatter.string(from: datePicker.date)
         }

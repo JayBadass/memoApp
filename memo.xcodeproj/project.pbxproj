@@ -12,6 +12,7 @@
 		6968A7E52AB97ACB004369BF /* CoreDataHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6968A7E42AB97ACB004369BF /* CoreDataHelper.swift */; };
 		6968A7E82ABBFB98004369BF /* TodoViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6968A7E72ABBFB97004369BF /* TodoViewModel.swift */; };
 		6968A7EA2ABC125B004369BF /* DoneViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6968A7E92ABC125B004369BF /* DoneViewModel.swift */; };
+		6968A7EC2ABC13F3004369BF /* TodoDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6968A7EB2ABC13F3004369BF /* TodoDetailViewModel.swift */; };
 		6979A3F32A9CB35C00AC293A /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 6979A3F22A9CB35C00AC293A /* Kingfisher */; };
 		6979A3FB2A9D94D800AC293A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6979A3FA2A9D94D800AC293A /* Assets.xcassets */; };
 		6979A3FD2A9DA82200AC293A /* appIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 6979A3FC2A9DA82200AC293A /* appIcon.png */; };
@@ -35,6 +36,7 @@
 		6968A7E42AB97ACB004369BF /* CoreDataHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataHelper.swift; sourceTree = "<group>"; };
 		6968A7E72ABBFB97004369BF /* TodoViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoViewModel.swift; sourceTree = "<group>"; };
 		6968A7E92ABC125B004369BF /* DoneViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoneViewModel.swift; sourceTree = "<group>"; };
+		6968A7EB2ABC13F3004369BF /* TodoDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoDetailViewModel.swift; sourceTree = "<group>"; };
 		6979A3FA2A9D94D800AC293A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		6979A3FC2A9DA82200AC293A /* appIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = appIcon.png; sourceTree = "<group>"; };
 		6979A3FE2A9DA9CB00AC293A /* PetViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetViewController.swift; sourceTree = "<group>"; };
@@ -70,6 +72,7 @@
 			children = (
 				6968A7E72ABBFB97004369BF /* TodoViewModel.swift */,
 				6968A7E92ABC125B004369BF /* DoneViewModel.swift */,
+				6968A7EB2ABC13F3004369BF /* TodoDetailViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -231,6 +234,7 @@
 				6968A7E32AB92EFB004369BF /* Task.xcdatamodeld in Sources */,
 				69A3B4702A79F09500FA119D /* AppDelegate.swift in Sources */,
 				6968A7E02AB8095F004369BF /* ProfileViewController.swift in Sources */,
+				6968A7EC2ABC13F3004369BF /* TodoDetailViewModel.swift in Sources */,
 				6979A4012A9DB14A00AC293A /* PetModels.swift in Sources */,
 				6979A3FF2A9DA9CB00AC293A /* PetViewController.swift in Sources */,
 				6968A7E82ABBFB98004369BF /* TodoViewModel.swift in Sources */,
