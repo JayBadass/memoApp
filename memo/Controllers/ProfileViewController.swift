@@ -20,7 +20,7 @@ class ProfileViewController: UIViewController, UICollectionViewDelegateFlowLayou
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let widthPerItem = (view.frame.width / 3) - 1
         
-        return CGSize(width: widthPerItem, height: widthPerItem) // 너비와 높이를 동일하게 설정, 필요에 따라 높이를 조절 가능
+        return CGSize(width: widthPerItem, height: widthPerItem)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
@@ -35,7 +35,7 @@ class ProfileViewController: UIViewController, UICollectionViewDelegateFlowLayou
 extension ProfileViewController: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 10 // 예시로 10개의 아이템을 표시합니다.
+        return 30
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -53,7 +53,6 @@ extension ProfileViewController: UICollectionViewDelegate {
 
 class ProfileCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var imageView: UIImageView!
-    // 다른 UI요소에 대한 Outlet도 추가 가능
 }
 
 
