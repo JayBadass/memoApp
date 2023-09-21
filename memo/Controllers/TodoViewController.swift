@@ -6,19 +6,21 @@
 //
 
 import UIKit
+import CoreData
 
 class TodoViewController: UIViewController {
     
     private var tableView: UITableView!
-    private var todoList: [TodoItem] {
+    
+    private var todoList: [Task] {
         get {
-            UserDefaults.standard.getTodoList()
+            CoreDataHelper.shared.fetchTasks()
         }
         set {
-            UserDefaults.standard.setTodoList(newValue)
             tableView.reloadData()
         }
     }
+    
     private let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy/MM/dd HH:mm"
@@ -50,6 +52,7 @@ class TodoViewController: UIViewController {
         let addAction = UIAlertAction(title: "Add", style: .default) { [weak self] _ in
             self?.addActionHandler(alert: alert)
         }
+        
         alert.addAction(addAction)
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
         
@@ -59,12 +62,11 @@ class TodoViewController: UIViewController {
     private func addActionHandler(alert: UIAlertController) {
         guard let title = alert.textFields?.first?.text, !title.isEmpty,
               let categoryText = alert.textFields?[1].text,
-              let category = Category(rawValue: categoryText),
               let dueDateString = alert.textFields?.last?.text,
               let dueDate = dateFormatter.date(from: dueDateString) else { return }
         
-        let todo = TodoItem(id: todoList.count, title: title, isCompleted: false, dueDate: dueDate, category: category)
-        todoList.append(todo)
+        _ = CoreDataHelper.shared.createTask(title: title, dueDate: dueDate, category: categoryText)
+        todoList = CoreDataHelper.shared.fetchTasks() // Refresh the todoList after adding
     }
 }
 
@@ -77,7 +79,7 @@ extension TodoViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         let category = Category.allCases[section]
-        return todos(in: category).count
+        return todos(in: category.rawValue).count
     }
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
@@ -87,30 +89,36 @@ extension TodoViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "todoCell", for: indexPath)
         let category = Category.allCases[indexPath.section]
-        let todo = todos(in: category)[indexPath.row]
+        let todo = todos(in: category.rawValue)[indexPath.row]
         configureCell(cell, with: todo)
         return cell
     }
     
     func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
         let category = Category.allCases[section]
-        let count = todos(in: category).count
+        let count = todos(in: category.rawValue).count
         return "\(count) tasks in this category"
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let category = Category.allCases[indexPath.section]
-        if let index = todoList.firstIndex(where: { $0.id == todos(in: category)[indexPath.row].id }) {
-            todoList[index].isCompleted.toggle()
-        }
+        let tasksInCategory = todoList.filter { $0.category == category.rawValue }
+        guard tasksInCategory.indices.contains(indexPath.row) else { return }
+        
+        let task = tasksInCategory[indexPath.row]
+        task.isCompleted.toggle()
+        _ = CoreDataHelper.shared.saveContext()
         tableView.reloadRows(at: [indexPath], with: .automatic)
     }
+
+
     
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { [weak self] (_, _, completionHandler) in
-            let category = Category.allCases[indexPath.section]
-            if let index = self?.todoList.firstIndex(where: { $0.id == self?.todos(in: category)[indexPath.row].id }) {
-                self?.todoList.remove(at: index)
+            let todo = self?.todoList[indexPath.row]
+            if let todo = todo {
+                _ = CoreDataHelper.shared.deleteTask(todo)
+                self?.todoList = CoreDataHelper.shared.fetchTasks() // Refresh the todoList after deleting
             }
             completionHandler(true)
         }
@@ -127,14 +135,15 @@ extension TodoViewController: UITableViewDelegate, UITableViewDataSource {
     
     private func editTodo(at indexPath: IndexPath) {
         let category = Category.allCases[indexPath.section]
-        guard let todoIndex = todoList.firstIndex(where: { $0.id == todos(in: category)[indexPath.row].id }) else { return }
+        let tasksInCategory = CoreDataHelper.shared.fetchTasks().filter { $0.category == category.rawValue }
+        guard tasksInCategory.indices.contains(indexPath.row) else { return }
         
-        let todo = todoList[todoIndex]
+        let task = tasksInCategory[indexPath.row]
         let alert = UIAlertController(title: "Edit Todo", message: "Update your todo details.", preferredStyle: .alert)
-        setupAlertFields(for: alert, with: todo)
+        setupAlertFields(for: alert, with: task)
         
         let updateAction = UIAlertAction(title: "Update", style: .default) { [weak self] _ in
-            self?.updateActionHandler(alert: alert, at: todoIndex)
+            self?.updateActionHandler(alert: alert, with: task)
         }
         alert.addAction(updateAction)
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
@@ -142,7 +151,7 @@ extension TodoViewController: UITableViewDelegate, UITableViewDataSource {
         present(alert, animated: true)
     }
     
-    func setupAlertFields(for alert: UIAlertController, with todo: TodoItem? = nil) {
+    func setupAlertFields(for alert: UIAlertController, with todo: Task? = nil) {
         alert.addTextField { textField in
             textField.placeholder = "Todo Title"
             textField.text = todo?.title
@@ -153,9 +162,11 @@ extension TodoViewController: UITableViewDelegate, UITableViewDataSource {
             let categoryPicker = UIPickerView()
             categoryPicker.delegate = self
             categoryPicker.dataSource = self
-            if let category = todo?.category, let index = Category.allCases.firstIndex(of: category) {
+            if let categoryString = todo?.category,
+               let categoryValue = Category(rawValue: categoryString),
+               let index = Category.allCases.firstIndex(of: categoryValue) {
                 categoryPicker.selectRow(index, inComponent: 0, animated: false)
-                textField.text = category.rawValue
+                textField.text = categoryValue.rawValue
             }
             textField.inputView = categoryPicker
         }
@@ -173,23 +184,27 @@ extension TodoViewController: UITableViewDelegate, UITableViewDataSource {
         }
     }
     
-    private func updateActionHandler(alert: UIAlertController, at index: Int) {
+    private func updateActionHandler(alert: UIAlertController, with task: Task) {
         guard let title = alert.textFields?.first?.text, !title.isEmpty,
               let categoryText = alert.textFields?[1].text,
-              let category = Category(rawValue: categoryText),
               let dueDateString = alert.textFields?.last?.text,
               let dueDate = dateFormatter.date(from: dueDateString) else { return }
         
-        todoList[index] = TodoItem(id: todoList[index].id, title: title, isCompleted: todoList[index].isCompleted, dueDate: dueDate, category: category)
+        task.title = title
+        task.dueDate = dueDate
+        task.category = categoryText
+        _ = CoreDataHelper.shared.updateTask(task, with: title)
+        todoList = CoreDataHelper.shared.fetchTasks()
+        tableView.reloadData()
     }
     
-    func todos(in category: Category) -> [TodoItem] {
+    func todos(in category: String) -> [Task] {
         return todoList.filter { $0.category == category }
     }
     
-    private func configureCell(_ cell: UITableViewCell, with todo: TodoItem) {
-        cell.textLabel?.text = todo.title
-        cell.accessoryType = todo.isCompleted ? .checkmark : .none
+    private func configureCell(_ cell: UITableViewCell, with task: Task) {
+        cell.textLabel?.text = task.title
+        cell.accessoryType = task.isCompleted ? .checkmark : .none
     }
 }
 
